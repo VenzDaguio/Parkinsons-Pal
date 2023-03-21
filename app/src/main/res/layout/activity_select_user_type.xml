@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".SelectUserType"
+    android:background="@color/light_blue">
+
+    <TextView
+        android:id="@+id/tvWhat"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="28dp"
+        android:layout_marginTop="184dp"
+        android:text="What are"
+        android:textColor="@color/gray_blue"
+        android:textSize="68sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="145dp"
+        android:layout_height="205dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0"
+        app:srcCompat="@drawable/white_circle" />
+
+    <TextView
+        android:id="@+id/tvYou"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="28dp"
+        android:layout_marginTop="244dp"
+        android:text="you?"
+        android:textColor="@color/gray_blue"
+        android:textSize="68sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tvSelectPrompt"
+        android:layout_width="236dp"
+        android:layout_height="24dp"
+        android:gravity="center"
+        android:text="Please select an option below."
+        android:textColor="@color/gray"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.16"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.473" />
+
+    <RadioGroup
+        android:id="@+id/userTypeGroup"
+        android:layout_width="336dp"
+        android:layout_height="198dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.506"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.72">
+
+        <RadioButton
+            android:id="@+id/btnPatient"
+            android:layout_width="335dp"
+            android:layout_height="57dp"
+            android:background="@drawable/bg_radio_button"
+            android:button="@null"
+            android:gravity="center"
+            android:layout_marginBottom="10dp"
+            android:text="Patient"
+            android:textAllCaps="false"
+            android:textColor="@color/gray"
+            android:textSize="20dp" />
+
+        <RadioButton
+            android:id="@+id/btnCarer"
+            android:layout_width="335dp"
+            android:layout_height="57dp"
+            android:background="@drawable/bg_radio_button"
+            android:layout_marginBottom="10dp"
+            android:button="@null"
+            android:gravity="center"
+            android:text="Carer"
+            android:textAllCaps="false"
+            android:textColor="@color/gray"
+            android:textSize="20dp" />
+
+        <RadioButton
+            android:id="@+id/btnDoctor"
+            android:layout_width="335dp"
+            android:layout_height="57dp"
+            android:background="@drawable/bg_radio_button"
+            android:button="@null"
+            android:gravity="center"
+            android:text="Doctor"
+            android:textAllCaps="false"
+            android:textColor="@color/gray"
+            android:textSize="20dp" />
+
+    </RadioGroup>
+
+    <Button
+        android:id="@+id/btnNext"
+        android:layout_width="335dp"
+        android:layout_height="57dp"
+        android:backgroundTint="@color/gray_blue"
+        android:text="Next"
+        android:textAllCaps="false"
+        android:textColor="@color/cream"
+        android:textSize="20dp"
+        android:onClick="btNext"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.913" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
