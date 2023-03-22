@@ -14,7 +14,7 @@ import com.example.parkinsonspal.Model.DataBaseHelper
 import java.time.LocalDate
 import java.time.LocalTime
 
-class SymptomDialog(context: Context, private val patientId: Int) : Dialog(context) {
+class SymptomDialog(context: Context, private val patientId: Int, private val symptomAdapter: SymptomAdapter) : Dialog(context) {
 
     private var startTime: LocalTime? = null
     private var endTime: LocalTime? = null
@@ -61,6 +61,8 @@ class SymptomDialog(context: Context, private val patientId: Int) : Dialog(conte
 
             val currentDate = LocalDate.now()
             dbHelper.insertSymptom(patientId, symptomDescription!!, startTime!!, endTime!!, currentDate)
+
+            symptomAdapter.notifyDataSetChanged()
 
             dismiss()
         }

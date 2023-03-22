@@ -3,8 +3,8 @@ package com.example.parkinsonspal.Model
 import java.time.LocalDate
 import java.time.LocalTime
 
-data class Symptom(val patientId: Int, val description: String, val startTime: LocalTime, val endTime: LocalTime, val date: LocalDate) {
+data class Symptom(val description: String, val startTime: String, val endTime: String) {
     override fun toString(): String {
-        return "Symptom(patientId=$patientId, description='$description', startTime=$startTime, endTime=$endTime, date=$date)"
+        return "Symptom(description='$description', startTime=$startTime, endTime=$endTime"
     }
 }

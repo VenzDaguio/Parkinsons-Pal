@@ -27,12 +27,14 @@ class DataBaseHelper(context: Context) : SQLiteOpenHelper(context, DataBaseName,
         const val TABLE_CARER = "Carers"
         const val TABLE_DOCTOR = "Doctors"
         const val TABLE_SYMPTOMS = "Symptoms"
+        const val TABLE_MOODS = "Moods"
         const val COLUMN_SYMPTOM_ID = "Symptom_Id"
         const val COLUMN_SYMPTOM_DESCRIPTION = "Description"
         const val COLUMN_START_TIME = "Start_Time"
         const val COLUMN_END_TIME = "End_Time"
         const val COLUMN_PATIENT_ID = "Patient_Id"
         const val COLUMN_DATE = "Date"
+        const val COLUMN_MOOD = "Mood"
     }
 
     override fun onCreate(db: SQLiteDatabase?) {
@@ -67,6 +69,12 @@ class DataBaseHelper(context: Context) : SQLiteOpenHelper(context, DataBaseName,
                     "FOREIGN KEY (Patient_Id) REFERENCES $TABLE_PATIENT($COLUMN_ID));"
         )
 
+        //create the moods table
+        db?.execSQL(
+            "CREATE TABLE $TABLE_MOODS($COLUMN_ID INTEGER PRIMARY KEY AUTOINCREMENT, $COLUMN_PATIENT_ID INTEGER NOT NULL, " +
+                    "$COLUMN_MOOD TEXT NOT NULL, $COLUMN_DATE TEXT NOT NULL, " +
+                    "FOREIGN KEY (Patient_Id) REFERENCES $TABLE_PATIENT($COLUMN_ID));"
+        )
         // create triggers
         db?.execSQL(
             "CREATE TRIGGER constraint_email BEFORE INSERT ON $TABLE_PENDING BEGIN SELECT CASE " +
@@ -209,21 +217,77 @@ class DataBaseHelper(context: Context) : SQLiteOpenHelper(context, DataBaseName,
         return db.insert(TABLE_SYMPTOMS, null, values)
     }
 
-    fun getSymptomsForPatient(patientId: Int, date: LocalDate): List<Triple<String, String, String>> {
+    fun getSymptomsForPatient(patientId: Int, date: LocalDate): List<Symptom> {
         val db = this.readableDatabase
-        val symptoms = mutableListOf<Triple<String, String, String>>()
+        val symptoms = mutableListOf<Symptom>()
         val query = "SELECT $COLUMN_SYMPTOM_DESCRIPTION, $COLUMN_START_TIME, $COLUMN_END_TIME FROM $TABLE_SYMPTOMS WHERE $COLUMN_PATIENT_ID = ? AND $COLUMN_DATE = ?"
         val cursor = db.rawQuery(query, arrayOf(patientId.toString(), date.toString()))
         if (cursor.moveToFirst()) {
             do {
                 val description = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_SYMPTOM_DESCRIPTION))
-                val startTime= cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_START_TIME))
+                val startTime = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_START_TIME))
                 val endTime = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_END_TIME))
-                symptoms.add(Triple(description, startTime, endTime))
+                val symptom = Symptom(description, startTime, endTime)
+                symptoms.add(symptom)
             } while (cursor.moveToNext())
         }
         cursor.close()
         return symptoms
+    }
+
+//    fun insertMood(patientId: Int, mood: String, date: LocalDate): Long {
+//        val db = this.writableDatabase
+//        val values = ContentValues().apply {
+//            put(COLUMN_PATIENT_ID, patientId)
+//            put(COLUMN_MOOD, mood)
+//            put(COLUMN_DATE, date.toString())
+//        }
+//        return db.insert(TABLE_MOODS, null, values)
+//    }
+
+    fun insertOrUpdateMood(patientId: Int, mood: String, date: LocalDate): Long {
+        val db = this.writableDatabase
+        val values = ContentValues().apply {
+            put(COLUMN_PATIENT_ID, patientId)
+            put(COLUMN_MOOD, mood)
+            put(COLUMN_DATE, date.toString())
+        }
+
+        val selection = "$COLUMN_PATIENT_ID=? AND $COLUMN_DATE=?"
+        val selectionArgs = arrayOf(patientId.toString(), date.toString())
+
+        val cursor = db.query(
+            TABLE_MOODS,
+            null,
+            selection,
+            selectionArgs,
+            null,
+            null,
+            null
+        )
+
+        return if (cursor.moveToFirst()) {
+            // Record already exists for this patient and date, update it
+            db.update(TABLE_MOODS, values, selection, selectionArgs)
+            cursor.getLong(cursor.getColumnIndexOrThrow(COLUMN_ID))
+        } else {
+            // Record doesn't exist for this patient and date, insert it
+            db.insert(TABLE_MOODS, null, values)
+        }
+    }
+
+
+
+    fun getMoodForPatient(patientId: Int, date: LocalDate): String? {
+        val db = this.readableDatabase
+        val query = "SELECT $COLUMN_MOOD FROM $TABLE_MOODS WHERE $COLUMN_PATIENT_ID = ? AND $COLUMN_DATE = ?"
+        val cursor = db.rawQuery(query, arrayOf(patientId.toString(), date.toString()))
+        var mood: String? = null
+        if (cursor.moveToFirst()) {
+            mood = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_MOOD))
+        }
+        cursor.close()
+        return mood
     }
 
 }
