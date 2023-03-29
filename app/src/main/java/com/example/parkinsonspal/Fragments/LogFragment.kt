@@ -28,7 +28,6 @@ class LogFragment : Fragment() {
 
         viewModel = ViewModelProvider(requireActivity()).get(TrackHealthViewModel::class.java)
         dbHelper = DataBaseHelper(requireContext())
-
     }
 
     override fun onCreateView(
@@ -43,11 +42,6 @@ class LogFragment : Fragment() {
         btnAdd.setOnClickListener {
             val symptomDialog = SymptomDialog(requireContext(), viewModel.patientId, symptomAdapter)
             symptomDialog.show()
-        }
-
-        btnMood.setOnClickListener {
-            val moodDialog = MoodDialog(requireContext(), viewModel.patientId, btnMood)
-            moodDialog.show()
         }
 
         // Set the current date text view
@@ -68,7 +62,27 @@ class LogFragment : Fragment() {
         symptomAdapter.symptoms = symptoms
         symptomAdapter.notifyDataSetChanged()
 
+        updateMoodButtonText()
+
+        btnMood.setOnClickListener {
+            val moodDialog = MoodDialog(requireContext(), viewModel.patientId, btnMood)
+            moodDialog.setOnDismissListener {
+                updateMoodButtonText()
+            }
+            moodDialog.show()
+        }
+
         return view
+    }
+
+    private fun updateMoodButtonText() {
+        val currentDate = LocalDate.now()
+        val mood = dbHelper.getMoodForPatient(viewModel.patientId, currentDate)
+        if (mood != null) {
+            btnMood.text = mood
+        } else {
+            btnMood.text = "Change Mood"
+        }
     }
 
     companion object {

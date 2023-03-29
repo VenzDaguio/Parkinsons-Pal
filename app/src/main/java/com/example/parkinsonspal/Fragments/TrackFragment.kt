@@ -5,56 +5,81 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.CalendarView
+import android.widget.TextView
+import androidx.core.content.ContextCompat
+import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.example.parkinsonspal.Model.DataBaseHelper
 import com.example.parkinsonspal.R
+import com.example.parkinsonspal.SymptomAdapter
+import com.example.parkinsonspal.TrackHealthViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [TrackFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class TrackFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
+    private lateinit var viewModel: TrackHealthViewModel
+    private lateinit var calendarView: CalendarView
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var adapter: SymptomAdapter
+    private lateinit var dbHelper: DataBaseHelper
+    private var selectedDate: LocalDate = LocalDate.now()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_track, container, false)
+        val view = inflater.inflate(R.layout.fragment_track, container, false)
+        calendarView = view.findViewById(R.id.calendarView)
+        recyclerView = view.findViewById(R.id.recyclerView)
+
+        dbHelper = DataBaseHelper(requireContext())
+        viewModel = ViewModelProvider(requireActivity()).get(TrackHealthViewModel::class.java)
+        adapter = SymptomAdapter(emptyList())
+
+        recyclerView.layoutManager = LinearLayoutManager(context)
+        recyclerView.adapter = adapter
+
+        // Listen for date changes
+        calendarView.setOnDateChangeListener { _, year, month, dayOfMonth ->
+            selectedDate = LocalDate.of(year, month + 1, dayOfMonth)
+            updateRecyclerView()
+
+            // Update the current date text view
+            val currentDateText = selectedDate.format(DateTimeFormatter.ofPattern("EE, dd MMM"))
+            view.findViewById<TextView>(R.id.tv_current_date).text = currentDateText
+        }
+
+        // Set the initial selected date to today
+        selectedDate = LocalDate.now()
+
+        // Set the calendar view to the current date
+        calendarView.date = selectedDate.toEpochDay() * 86400000
+
+        // Update the current date text view
+        val currentDateText = selectedDate.format(DateTimeFormatter.ofPattern("EE, dd MMM"))
+        view.findViewById<TextView>(R.id.tv_current_date).text = currentDateText
+
+        // Update the recycler view with the symptoms for today's date
+        updateRecyclerView()
+
+        return view
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment TrackFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            TrackFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
+    private fun updateRecyclerView() {
+        // Run the database queries on a separate thread
+        GlobalScope.launch(Dispatchers.IO) {
+            val symptoms = dbHelper.getSymptomsForPatient(viewModel.patientId,selectedDate)
+            withContext(Dispatchers.Main) {
+                adapter.symptoms = symptoms
+                adapter.notifyDataSetChanged()
             }
+        }
     }
+
 }

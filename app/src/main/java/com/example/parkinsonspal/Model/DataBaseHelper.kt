@@ -235,16 +235,6 @@ class DataBaseHelper(context: Context) : SQLiteOpenHelper(context, DataBaseName,
         return symptoms
     }
 
-//    fun insertMood(patientId: Int, mood: String, date: LocalDate): Long {
-//        val db = this.writableDatabase
-//        val values = ContentValues().apply {
-//            put(COLUMN_PATIENT_ID, patientId)
-//            put(COLUMN_MOOD, mood)
-//            put(COLUMN_DATE, date.toString())
-//        }
-//        return db.insert(TABLE_MOODS, null, values)
-//    }
-
     fun insertOrUpdateMood(patientId: Int, mood: String, date: LocalDate): Long {
         val db = this.writableDatabase
         val values = ContentValues().apply {
@@ -276,8 +266,6 @@ class DataBaseHelper(context: Context) : SQLiteOpenHelper(context, DataBaseName,
         }
     }
 
-
-
     fun getMoodForPatient(patientId: Int, date: LocalDate): String? {
         val db = this.readableDatabase
         val query = "SELECT $COLUMN_MOOD FROM $TABLE_MOODS WHERE $COLUMN_PATIENT_ID = ? AND $COLUMN_DATE = ?"
@@ -289,5 +277,24 @@ class DataBaseHelper(context: Context) : SQLiteOpenHelper(context, DataBaseName,
         cursor.close()
         return mood
     }
+
+    fun getDatesWithEntriesForPatient(patientId: Int): List<LocalDate> {
+        val datesWithEntries = mutableListOf<LocalDate>()
+        val db = readableDatabase
+        val query = "SELECT DISTINCT date FROM $TABLE_SYMPTOMS WHERE patient_id = ?"
+        val selectionArgs = arrayOf(patientId.toString())
+        val cursor = db.rawQuery(query, selectionArgs)
+
+        with(cursor) {
+            while (moveToNext()) {
+                val dateString = getString(getColumnIndexOrThrow("entry_date"))
+                val date = LocalDate.parse(dateString)
+                datesWithEntries.add(date)
+            }
+            close()
+        }
+        return datesWithEntries
+    }
+
 
 }
