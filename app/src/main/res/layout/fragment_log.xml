@@ -150,7 +150,7 @@
         android:id="@+id/btnMood"
         android:layout_width="148dp"
         android:layout_height="101dp"
-        android:text="Button"
+        android:text="Change Mood"
         android:textColor="@color/gray_blue"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
