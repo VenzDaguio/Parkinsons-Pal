@@ -5,6 +5,8 @@ import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
+import com.example.parkinsonspal.Medication
+import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.LocalTime
 
@@ -28,6 +30,7 @@ class DataBaseHelper(context: Context) : SQLiteOpenHelper(context, DataBaseName,
         const val TABLE_DOCTOR = "Doctors"
         const val TABLE_SYMPTOMS = "Symptoms"
         const val TABLE_MOODS = "Moods"
+        const val TABLE_MEDICATIONS = "Medications"
         const val COLUMN_SYMPTOM_ID = "Symptom_Id"
         const val COLUMN_SYMPTOM_DESCRIPTION = "Description"
         const val COLUMN_START_TIME = "Start_Time"
@@ -35,6 +38,11 @@ class DataBaseHelper(context: Context) : SQLiteOpenHelper(context, DataBaseName,
         const val COLUMN_PATIENT_ID = "Patient_Id"
         const val COLUMN_DATE = "Date"
         const val COLUMN_MOOD = "Mood"
+        const val COLUMN_MEDICATION_NAME = "Name"
+        const val COLUMN_MEDICATION_TIME = "Time"
+        const val COLUMN_MEDICATION_QUANTITY = "Quantity"
+        const val COLUMN_MEDICATION_REMINDER = "Reminder"
+        const val COLUMN_MEDICATION_TAKEN = "Taken"
     }
 
     override fun onCreate(db: SQLiteDatabase?) {
@@ -69,6 +77,16 @@ class DataBaseHelper(context: Context) : SQLiteOpenHelper(context, DataBaseName,
                     "FOREIGN KEY (Patient_Id) REFERENCES $TABLE_PATIENT($COLUMN_ID));"
         )
 
+        //create the medication table
+        db?.execSQL(
+            "CREATE TABLE $TABLE_MEDICATIONS ($COLUMN_ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                    "$COLUMN_PATIENT_ID INTEGER NOT NULL, $COLUMN_MEDICATION_NAME TEXT NOT NULL, " +
+                    "$COLUMN_MEDICATION_TIME TIME NOT NULL, $COLUMN_MEDICATION_QUANTITY INTEGER NOT NULL, " +
+                    "$COLUMN_MEDICATION_TAKEN INTEGER NOT NULL, " +
+                    "FOREIGN KEY ($COLUMN_PATIENT_ID) REFERENCES $TABLE_PATIENT($COLUMN_ID));"
+        )
+
+
         //create the moods table
         db?.execSQL(
             "CREATE TABLE $TABLE_MOODS($COLUMN_ID INTEGER PRIMARY KEY AUTOINCREMENT, $COLUMN_PATIENT_ID INTEGER NOT NULL, " +
@@ -94,6 +112,7 @@ class DataBaseHelper(context: Context) : SQLiteOpenHelper(context, DataBaseName,
             db?.execSQL("DROP TABLE IF EXISTS " + TABLE_DOCTOR)
             db?.execSQL("DROP TABLE IF EXISTS " + TABLE_CARER)
             db?.execSQL("DROP TABLE IF EXISTS" + TABLE_SYMPTOMS)
+            db?.execSQL("DROP TABLE IF EXISTS" + TABLE_MEDICATIONS)
             onCreate(db)
         }
     }
@@ -217,6 +236,18 @@ class DataBaseHelper(context: Context) : SQLiteOpenHelper(context, DataBaseName,
         return db.insert(TABLE_SYMPTOMS, null, values)
     }
 
+    fun insertMedication(patientId: Int, name: String, time: LocalTime, quantity: Int, taken: Boolean) : Long {
+        val db = this.writableDatabase
+        val values = ContentValues().apply {
+            put(COLUMN_PATIENT_ID, patientId)
+            put(COLUMN_MEDICATION_NAME, name)
+            put(COLUMN_MEDICATION_TIME, time.toString())
+            put(COLUMN_MEDICATION_QUANTITY, quantity)
+            put(COLUMN_MEDICATION_TAKEN, taken)
+        }
+        return db.insert(TABLE_MEDICATIONS, null, values)
+    }
+
     fun getSymptomsForPatient(patientId: Int, date: LocalDate): List<Symptom> {
         val db = this.readableDatabase
         val symptoms = mutableListOf<Symptom>()
@@ -233,6 +264,26 @@ class DataBaseHelper(context: Context) : SQLiteOpenHelper(context, DataBaseName,
         }
         cursor.close()
         return symptoms
+    }
+
+    fun getMedicationForPatient(patientId: Int) : List<Medication> {
+        val db = this.readableDatabase
+        val medications = mutableListOf<Medication>()
+        val query = "SELECT $COLUMN_MEDICATION_NAME, $COLUMN_MEDICATION_TIME, $COLUMN_MEDICATION_QUANTITY,$COLUMN_MEDICATION_TAKEN FROM $TABLE_MEDICATIONS WHERE $COLUMN_PATIENT_ID = ? "
+        val cursor = db.rawQuery(query, arrayOf(patientId.toString()))
+        if (cursor.moveToFirst()) {
+            do {
+                val name = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_MEDICATION_NAME))
+                val timeString = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_MEDICATION_TIME))
+                val time = LocalTime.parse(timeString)
+                val quantity = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_MEDICATION_QUANTITY))
+                val taken = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_MEDICATION_TAKEN))
+                val medication = Medication(name, time, quantity, taken)
+                medications.add(medication)
+            } while (cursor.moveToNext())
+        }
+        cursor.close()
+        return medications
     }
 
     fun insertOrUpdateMood(patientId: Int, mood: String, date: LocalDate): Long {

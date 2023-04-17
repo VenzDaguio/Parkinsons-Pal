@@ -15,8 +15,17 @@ android {
         targetSdk 32
         versionCode 1
         versionName "1.0"
+        manifestPlaceholders = [broadcast_receiver: "com.example.parkinsonspal.ReminderBroadcastReceiver"]
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        viewBinding {
+            enabled = true
+        }
+
+        buildFeatures {
+            dataBinding true
+        }
     }
 
     buildTypes {
