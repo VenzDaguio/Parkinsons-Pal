@@ -51,7 +51,7 @@ class MedicationDialog(
             }
         }
 
-        // initialize views
+        // initialise views
         val nameEditText = findViewById<EditText>(R.id.nameEditText)
         val timeSpinner = findViewById<Spinner>(R.id.time_spinner)
         val quantityEditText = findViewById<EditText>(R.id.quantityEditText)

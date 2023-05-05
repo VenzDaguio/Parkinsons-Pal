@@ -54,7 +54,7 @@ class EditMedicationDialog(
             }
         }
 
-        // initialize views
+        // initialise views
         val nameEditText = findViewById<EditText>(R.id.nameEditText)
         val timeSpinner = findViewById<Spinner>(R.id.time_spinner)
         val quantityEditText = findViewById<EditText>(R.id.quantityEditText)
@@ -163,14 +163,12 @@ class EditMedicationDialog(
                 .create()
 
             confirmationDialog.setOnShowListener {
-                // Change the color of the dialog buttons
                 val buttonPositive = confirmationDialog.getButton(DialogInterface.BUTTON_POSITIVE)
                 val buttonNegative = confirmationDialog.getButton(DialogInterface.BUTTON_NEGATIVE)
 
                 buttonPositive.setBackgroundResource(R.color.gray_blue)
                 buttonNegative.setBackgroundResource(R.color.gray_blue)
 
-                // You can also change the text color of the buttons, if needed
                 buttonPositive.setTextColor(Color.RED)
                 buttonNegative.setTextColor(Color.RED)
             }

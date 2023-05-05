@@ -20,13 +20,6 @@
         android:hint="Medication Name"
         android:inputType="text" />
 
-<!--    <EditText-->
-<!--        android:id="@+id/timeEditText"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:hint="Time"-->
-<!--        android:inputType="time" />-->
-
     <Spinner
         android:id="@+id/time_spinner"
         android:layout_width="wrap_content"
@@ -38,13 +31,6 @@
         android:layout_height="wrap_content"
         android:hint="Quantity"
         android:inputType="number" />
-
-<!--    <EditText-->
-<!--        android:id="@+id/reminderEditText"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:hint="Reminder"-->
-<!--        android:inputType="text" />-->
 
     <LinearLayout
         android:layout_width="match_parent"

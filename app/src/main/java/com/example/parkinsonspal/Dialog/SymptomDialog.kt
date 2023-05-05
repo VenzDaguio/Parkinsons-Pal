@@ -27,7 +27,7 @@ class SymptomDialog(context: Context, private val patientId: Int, private val sy
         val window = window
         window?.setLayout((context.resources.displayMetrics.widthPixels * 0.9).toInt(), WindowManager.LayoutParams.WRAP_CONTENT)
 
-        // initialize start and end time pickers
+        // initialise start and end time pickers
         val startTimePicker = findViewById<Spinner>(R.id.startTimeSpinner)
         val endTimePicker = findViewById<Spinner>(R.id.endTimeSpinner)
 

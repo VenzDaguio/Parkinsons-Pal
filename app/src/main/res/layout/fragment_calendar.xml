@@ -6,7 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".Fragments.CalendarFragment">
 
-    <!-- TODO: Update blank fragment layout -->
     <TextView
         android:id="@+id/calendar"
         android:layout_width="wrap_content"
