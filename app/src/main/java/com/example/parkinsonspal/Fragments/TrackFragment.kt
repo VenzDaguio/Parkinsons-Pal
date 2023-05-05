@@ -7,13 +7,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.CalendarView
 import android.widget.TextView
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.parkinsonspal.Model.DataBaseHelper
 import com.example.parkinsonspal.R
-import com.example.parkinsonspal.SymptomAdapter
+import com.example.parkinsonspal.Adapter.SymptomAdapter
 import com.example.parkinsonspal.TrackHealthViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -29,6 +28,7 @@ class TrackFragment : Fragment() {
     private lateinit var adapter: SymptomAdapter
     private lateinit var dbHelper: DataBaseHelper
     private var selectedDate: LocalDate = LocalDate.now()
+    private lateinit var tvMood: TextView
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -44,6 +44,8 @@ class TrackFragment : Fragment() {
 
         recyclerView.layoutManager = LinearLayoutManager(context)
         recyclerView.adapter = adapter
+
+        tvMood = view.findViewById(R.id.tvMood)
 
         // Listen for date changes
         calendarView.setOnDateChangeListener { _, year, month, dayOfMonth ->
@@ -72,14 +74,14 @@ class TrackFragment : Fragment() {
     }
 
     private fun updateRecyclerView() {
-        // Run the database queries on a separate thread
         GlobalScope.launch(Dispatchers.IO) {
-            val symptoms = dbHelper.getSymptomsForPatient(viewModel.patientId,selectedDate)
+            val symptoms = dbHelper.getSymptomsForPatient(viewModel.patientId, selectedDate)
+            val mood = dbHelper.getMoodForPatient(viewModel.patientId, selectedDate)
             withContext(Dispatchers.Main) {
                 adapter.symptoms = symptoms
                 adapter.notifyDataSetChanged()
+                tvMood.text = "Mood: ${mood ?: ""}"
             }
         }
     }
-
 }

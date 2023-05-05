@@ -1,11 +1,11 @@
-package com.example.parkinsonspal
+package com.example.parkinsonspal.Dialog
 
 import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
 import android.widget.Button
-import android.widget.TextView
 import com.example.parkinsonspal.Model.DataBaseHelper
+import com.example.parkinsonspal.R
 import java.time.LocalDate
 
 class MoodDialog(context: Context, private val patientId: Int, private val btnMood: Button) : Dialog(context) {

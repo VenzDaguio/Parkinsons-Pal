@@ -1,16 +1,14 @@
-package com.example.parkinsonspal
+package com.example.parkinsonspal.Dialog
 
-import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
-import android.view.View
 import android.view.WindowManager
 import android.widget.*
-import androidx.fragment.app.DialogFragment
-import com.example.parkinsonspal.Model.Symptom
+import com.example.parkinsonspal.Adapter.SymptomAdapter
 import com.example.parkinsonspal.Model.DataBaseHelper
+import com.example.parkinsonspal.R
 import java.time.LocalDate
 import java.time.LocalTime
 
@@ -53,6 +51,21 @@ class SymptomDialog(context: Context, private val patientId: Int, private val sy
             endTime = LocalTime.parse(endTimePicker.selectedItem as String)
             symptomDescription = findViewById<EditText>(R.id.descriptionEditText).text.toString()
 
+            if (symptomDescription.isNullOrEmpty()) {
+                Toast.makeText(context, "Please enter a symptom description", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            if (startTime == endTime) {
+                Toast.makeText(context, "Start and end times cannot be the same", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            if (endTime!!.isBefore(startTime)) {
+                Toast.makeText(context, "End time cannot be earlier than start time", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+
+            }
             // log patientId and symptom data
             Log.d("SymptomDialog", "Patient ID: $patientId")
             Log.d("SymptomDialog", "Symptom Description: $symptomDescription")

@@ -1,4 +1,4 @@
-package com.example.parkinsonspal
+package com.example.parkinsonspal.Dialog
 
 import android.app.AlarmManager
 import android.app.Dialog
@@ -7,12 +7,12 @@ import android.content.Context
 import android.content.Context.ALARM_SERVICE
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.WindowManager
 import android.widget.*
+import com.example.parkinsonspal.Adapter.MedicationAdapter
 import com.example.parkinsonspal.Model.DataBaseHelper
-import com.example.parkinsonspal.ReminderBroadcastReceiver
-import java.text.SimpleDateFormat
+import com.example.parkinsonspal.R
+import com.example.parkinsonspal.Receiver.ReminderBroadcastReceiver
 import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.ZoneId
@@ -71,11 +71,15 @@ class MedicationDialog(
             medicationTime = LocalTime.parse(timeSpinner.selectedItem.toString())
             medicationQuantity = quantityEditText.text.toString().toIntOrNull()
 
-            // log patientId and medication data
-            Log.d("MedicationDialog", "Patient ID: $patientId")
-            Log.d("MedicationDialog", "Medication Name: $medicationName")
-            Log.d("MedicationDialog", "Medication Time: $medicationTime")
-            Log.d("MedicationDialog", "Medication Quantity: $medicationQuantity")
+            if (medicationName.isNullOrEmpty()) {
+                Toast.makeText(context, "Please enter a medication name", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            if (medicationQuantity == null) {
+                Toast.makeText(context, "Please enter a medication quantity", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
 
             // insert medication into database
             dbHelper.insertMedication(
@@ -118,7 +122,7 @@ class MedicationDialog(
         }
     }
 
-        fun getMedicationName(): String? {
+    fun getMedicationName(): String? {
         return medicationName
     }
 
@@ -134,6 +138,3 @@ class MedicationDialog(
         return medicationReminder
     }
 }
-
-
-

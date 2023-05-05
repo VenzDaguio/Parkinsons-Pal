@@ -1,8 +1,10 @@
 package com.example.parkinsonspal
 
+import android.content.ContentValues.TAG
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import com.example.parkinsonspal.Model.DataBaseHelper
 

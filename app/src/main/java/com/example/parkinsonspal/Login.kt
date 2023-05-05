@@ -33,17 +33,25 @@ class Login : AppCompatActivity() {
         if(email == "" || password == "")
             Toast.makeText(this, "Please enter all the fields", Toast.LENGTH_SHORT).show()
         else if (checkLogInPatient == true) {
-            val patientId = dbHelper.getPatientId(email, password)
+            val patientId = dbHelper.getPatientId(email)
             val intent = Intent(this, TrackHealth::class.java)
             intent.putExtra("patient_id", patientId)
             Log.d("LogIn","Patient ID: $patientId")
             startActivity(intent)
         }
         else if (checkLogInCarer == true) {
-
+            val carerId = dbHelper.getCarerId(email)
+            val intent = Intent(this, TrackHealth::class.java)
+            intent.putExtra("carer_id", carerId)
+            Log.d("LogIn","Carer ID: $carerId")
+            startActivity(intent)
         }
         else if (checkLogInDoctor == true) {
-
+            val doctorId = dbHelper.getDoctorId(email)
+            val intent = Intent(this, TrackHealth::class.java)
+            intent.putExtra("doctor_id", doctorId)
+            Log.d("LogIn","Doctor ID: $doctorId")
+            startActivity(intent)
         }
         else
             Toast.makeText(this, "Invalid Credentials", Toast.LENGTH_SHORT).show()

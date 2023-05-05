@@ -11,6 +11,9 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.parkinsonspal.*
+import com.example.parkinsonspal.Adapter.SymptomAdapter
+import com.example.parkinsonspal.Dialog.MoodDialog
+import com.example.parkinsonspal.Dialog.SymptomDialog
 import com.example.parkinsonspal.Model.DataBaseHelper
 import java.text.SimpleDateFormat
 import java.time.LocalDate

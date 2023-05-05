@@ -1,4 +1,4 @@
-package com.example.parkinsonspal
+package com.example.parkinsonspal.Adapter
 
 import android.view.LayoutInflater
 import android.view.View
@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.parkinsonspal.Model.Symptom
+import com.example.parkinsonspal.R
 
 class SymptomAdapter(var symptoms: List<Symptom>) :
     RecyclerView.Adapter<SymptomAdapter.SymptomViewHolder>() {
@@ -31,4 +32,4 @@ class SymptomAdapter(var symptoms: List<Symptom>) :
     }
 
     override fun getItemCount() = symptoms.size
-}
+    }
